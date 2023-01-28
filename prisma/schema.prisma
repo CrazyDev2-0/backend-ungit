@@ -28,8 +28,7 @@ model Subscription {
 
 model Notification {
     id        Int      @id @default(autoincrement())
-    title     String
-    body      String
+    content   String
     timestamp DateTime
     user      User?    @relation(fields: [userId], references: [id])
     userId    Int?

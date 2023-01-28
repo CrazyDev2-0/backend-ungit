@@ -63,7 +63,11 @@ app.post("/profile/update", async(req, res) => {
 app.post("/subscribe", AuthMiddleware.authRequired, async(req, res) => {
     const ownerName = req.body.owner_name;
     const repository_name = req.body.repository_name;
-    const labels = req.body.labels;
+    let labels = req.body.labels;
+
+    if(labels == "" || labels.length == 0){
+        labels = "*"
+    }
 
     const currentRecord = await prisma.subscription.findFirst({
         where: {
