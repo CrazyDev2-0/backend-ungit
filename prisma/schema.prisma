@@ -1,0 +1,36 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = []
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = "file:./dev.db"
+}
+
+model User {
+    id            Int            @id @default(autoincrement())
+    username      String         @unique
+    mobileno      String
+    emailid       String
+    subscriptions Subscription[]
+    notifications Notification[]
+}
+
+model Subscription {
+    id             Int    @id @default(autoincrement())
+    repositoryName String
+    ownerName      String
+    labels         String
+    User           User?  @relation(fields: [userId], references: [id])
+    userId         Int?
+}
+
+model Notification {
+    id        Int      @id @default(autoincrement())
+    title     String
+    body      String
+    timestamp DateTime
+    user      User?    @relation(fields: [userId], references: [id])
+    userId    Int?
+}
