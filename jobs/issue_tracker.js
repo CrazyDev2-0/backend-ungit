@@ -1,5 +1,16 @@
 require("dotenv").config()
 const prisma = require("../db").getInstance();
+const os = require("os");
+const fs = require("fs");
+
+function readTimestampFromFile(){
+    if(!fs.existsSync("timestamp.txt")){
+        // create the file with new tiimestamp
+        fs.writeFileSync("timestamp.txt", (new Date(Date.now())).toISOString());
+    }
+    const timestamp = fs.readFileSync("timestamp.txt", "utf-8");
+    return timestamp;
+}
 
 (async () => {
     // Fetch the token
@@ -16,7 +27,8 @@ const prisma = require("../db").getInstance();
     for (let i = 0; i < repos.length; i++) {
         const repo_details = repos[i];
         // Api call
-        const api_response = await fetch(`https://api.github.com/repos/${repo_details.ownerName}/${repo_details.repositoryName}/issues?state=open&per_page=100`, {
+        const timestamp_last = readTimestampFromFile();
+        const api_response = await fetch(`https://api.github.com/repos/${repo_details.ownerName}/${repo_details.repositoryName}/issues?state=open&per_page=100&since=${timestamp_last}`, {
             headers: {
                 "Authorization": `Bearer ${api_token}`
             }
@@ -76,7 +88,6 @@ const prisma = require("../db").getInstance();
                 const label = splitted_label[k];
                 console.log(label);
                 if (label === "*" || label in label_issue_map) {
-
                     await prisma.notification.create({
                         data: {
                             content: JSON.stringify(label_issue_map[label]),
