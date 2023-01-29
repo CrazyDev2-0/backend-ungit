@@ -7,9 +7,13 @@ function readTimestampFromFile(){
     if(!fs.existsSync("timestamp.txt")){
         // create the file with new tiimestamp
         fs.writeFileSync("timestamp.txt", (new Date(Date.now())).toISOString());
+        return (new Date(Date.now())).toISOString();
+    }else{
+        // update the file with new timestamp
+        const timestamp = fs.readFileSync("timestamp.txt", "utf-8");
+        fs.writeFileSync("timestamp.txt", (new Date(Date.now())).toISOString());
+        return timestamp;
     }
-    const timestamp = fs.readFileSync("timestamp.txt", "utf-8");
-    return timestamp;
 }
 
 (async () => {
