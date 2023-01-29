@@ -90,24 +90,14 @@ function readTimestampFromFile(){
             const splitted_label = user.labels.split(",");
             for (let k = 0; k < splitted_label.length; k++) {
                 const label = splitted_label[k];
-                if(label === "*"){
+                if (label in label_issue_map) {
                     await prisma.notification.create({
                         data: {
-                            content: JSON.stringify(Object.values(label_issue_map)),
+                            content: JSON.stringify(label_issue_map[label]),
                             userId: user.User.id,
                             timestamp: new Date(Date.now())
                         }
                     })
-                }else{
-                    if (label in label_issue_map) {
-                        await prisma.notification.create({
-                            data: {
-                                content: JSON.stringify(label_issue_map[label]),
-                                userId: user.User.id,
-                                timestamp: new Date(Date.now())
-                            }
-                        })
-                    }
                 }
             }
         }
