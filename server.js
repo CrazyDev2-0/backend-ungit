@@ -135,6 +135,37 @@ app.post("/unsubscribe", AuthMiddleware.authRequired, async(req, res) => {
     })
 })
 
+// Api to fetch the notifications
+app.get("/notifications", AuthMiddleware.authRequired, async(req, res) => {
+    const notifications = await prisma.notification.findMany({
+        where: {
+            userId: req.user.id
+        },
+        select: {
+            id: true,
+            content: true,
+            timestamp: true,
+        }
+    }) 
+    await prisma.notification.deleteMany({
+        where: {
+            userId: req.user.id
+        }
+    })
+    let notification_all = []
+    for (let i = 0; i < notifications.length; i++) {
+        const contents = JSON.parse(notifications[i].content);
+        for (let j = 0; j < contents.length; j++) {
+            const cc = contents[j];
+            notification_all.push({
+                "title": cc.title,
+                "url": cc.url,
+                "timestamp": notifications[i].timestamp,
+            })
+        }
+    }
+    res.status(200).json(notification_all)
+})
 
 
 // Global error handler
