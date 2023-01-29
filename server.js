@@ -65,7 +65,7 @@ app.post("/rollbacksubscription", AuthMiddleware.authRequired, async(req, res) =
     const repository_name = req.body.repository_name;
     let labels = req.body.labels;
 
-    if(labels == "" || labels.length == 0){
+    if(labels === "" || labels.length === null || labels.length === undefined){
         labels = "*"
     }
 
