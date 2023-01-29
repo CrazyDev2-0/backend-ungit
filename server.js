@@ -60,7 +60,7 @@ app.post("/profile/update", async(req, res) => {
 })
 
 
-app.post("/subscribe", AuthMiddleware.authRequired, async(req, res) => {
+app.post("/rollbacksubscription", AuthMiddleware.authRequired, async(req, res) => {
     const ownerName = req.body.owner_name;
     const repository_name = req.body.repository_name;
     let labels = req.body.labels;
