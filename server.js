@@ -3,7 +3,6 @@ const app = express();
 const prisma = require("./db").getInstance();
 const {AuthMiddleware} = require("./middleware");
 
-
 // Config
 global.__basedir = __dirname;
 app.disable('x-powered-by')

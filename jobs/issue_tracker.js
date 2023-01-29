@@ -33,6 +33,7 @@ const prisma = require("../db").getInstance();
                 labels: true,
                 User: {
                     select: {
+                        id: true,
                         emailid: true,
                         mobileno: true
                     }
@@ -57,7 +58,7 @@ const prisma = require("../db").getInstance();
             // Traverse each label
             for (let k = 0; k < issue.labels.length; k++) {
                 const label = issue.labels[k];
-                if (!( label.name in  label_issue_map)) {
+                if (!(label.name in label_issue_map)) {
                     label_issue_map[label.name] = [];
                 }
                 label_issue_map[label.name].push({
@@ -66,18 +67,23 @@ const prisma = require("../db").getInstance();
                 });
             }
         }
+        console.log(label_issue_map);
         // Traverse each user and prepare the notification
         for (let j = 0; j < users.length; j++) {
             const user = users[j];
             const splitted_label = user.labels.split(",");
             for (let k = 0; k < splitted_label.length; k++) {
                 const label = splitted_label[k];
-                if (label in label_issue_map) {
+                console.log(label);
+                if (label === "*" || label in label_issue_map) {
+
                     await prisma.notification.create({
                         data: {
-                            content: JSON.stringify(label_issue_map[label])
+                            content: JSON.stringify(label_issue_map[label]),
+                            userId: user.User.id,
+                            timestamp: new Date(Date.now())
                         }
-                    })   
+                    })
                 }
             }
         }
